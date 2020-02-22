@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  server:
+    build:
+      context: ./server
+      args:
+        UID: ${UID}
+        GID: ${GID}
+        SERVER_ROOT_PASSWORD: ${SERVER_ROOT_PASSWORD}
+    container_name: server
+    restart: always
+#    environment:
+#      XDEBUG_CONFIG: remote_host=host.docker.internal
+#      PHP_IDE_CONFIG: serverName=localhost
+    ports:
+      - 80:80
+      # - 443:443 production ssl/tls
+      - "2200:22" # port 22 ssh for xdebug
+    volumes:
+      - ./www:/home/serveruser/vhosts:delegated
+    depends_on:
+      - db
+    extra_hosts:
+      - "giannisvas.local:127.0.0.1" # domain
+    networks:
+      app_net:
+        ipv4_address: 10.100.100.11
+  db:
+    image: mysql:5.7
+    container_name: db
+    ports:
+      - 3306:3306 # commented in production
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./db/config:/etc/mysql/conf.d:delegated #overwrite default settings of mysql | :delegated for caching
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    networks:
+      app_net:
+        ipv4_address: 10.100.100.21
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8080:80
+    depends_on:
+      - db
+    environment:
+      PMA_HOST: db
+      PHP_UPLOAD_MAX_FILESIZE: 67108864
+    networks:
+      app_net:
+        ipv4_address: 10.100.100.31
+  redis:
+    container_name: redis
+    image: redis:3.2
+    volumes:
+      - redis-data:/data
+    networks:
+      app_net:
+        ipv4_address: 10.100.100.41
+networks:
+  app_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.100.100.0/24
+volumes:
+  db-data:
+  redis-data:
