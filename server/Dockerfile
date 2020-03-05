@@ -88,6 +88,15 @@ RUN wget https://phar.phpunit.de/phpunit.phar && \
   chmod +x phpunit.phar && \
   mv phpunit.phar /usr/local/bin/phpunit
 
+# Install Node.js
+RUN apt-get install --yes curl && \
+	curl --silent --location https://deb.nodesource.com/setup_12.x | sudo bash - && \
+	apt-get install --yes nodejs && \
+	apt-get install --yes build-essential
+
+# install dependecies globally
+RUN npm install -g gatsby-cli
+
 # Add vhosts and enable sites.
 COPY vhosts /etc/apache2/sites-available
 RUN cd /etc/apache2/sites-available && a2ensite * && a2dissite default-ssl 000-default
@@ -103,6 +112,6 @@ ADD ./supervisor/apache.conf /etc/supervisor/conf.d/apache.conf
 ADD ./supervisor/ssh.conf /etc/supervisor/conf.d/ssh.conf
 RUN chown root:root /etc/supervisor/conf.d/* && chmod 644 /etc/supervisor/conf.d/*
 
-EXPOSE 80 22
+EXPOSE 80 22 8080 8000
 
 CMD ["/usr/bin/supervisord", "-n"]
