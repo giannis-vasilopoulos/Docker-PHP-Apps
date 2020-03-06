@@ -15,6 +15,7 @@ RUN \
 	&& apt-get install -y \
 		apache2 \
 		curl \
+		--no-install-recommends iputils-ping \
 		git unzip ca-certificates wget supervisor openssh-server \
 		less \
 		libapache2-mod-php7.4 \
