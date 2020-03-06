@@ -115,4 +115,6 @@ RUN chown root:root /etc/supervisor/conf.d/* && chmod 644 /etc/supervisor/conf.d
 
 EXPOSE 80 22 8080 8000
 
+WORKDIR /home/serveruser/vhosts
+
 CMD ["/usr/bin/supervisord", "-n"]
