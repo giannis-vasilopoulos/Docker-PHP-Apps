@@ -10,19 +10,19 @@ services:
         SERVER_ROOT_PASSWORD: ${SERVER_ROOT_PASSWORD}
     container_name: server
     restart: always
-#    environment:
-#      XDEBUG_CONFIG: remote_host=host.docker.internal
-#      PHP_IDE_CONFIG: serverName=localhost
+    #    environment:
+    #      XDEBUG_CONFIG: remote_host=host.docker.internal
+    #      PHP_IDE_CONFIG: serverName=localhost
     ports:
       - 80:80
       # - 443:443 production ssl/tls
-      - "2200:22" # port 22 ssh for xdebug
+      - '2200:22' # port 22 ssh for xdebug
     volumes:
       - ./www:/home/serveruser/vhosts:delegated
     depends_on:
       - db
     extra_hosts:
-      - "giannisvas.local:127.0.0.1" # domain
+      - 'giannisvas.local:127.0.0.1'
     networks:
       app_net:
         ipv4_address: 10.100.100.11
