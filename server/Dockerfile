@@ -15,6 +15,7 @@ RUN \
 	&& apt-get install -y \
 	apache2 \
 	curl \
+	--no-install-recommends iputils-ping \
 	git unzip ca-certificates wget supervisor openssh-server \
 	less \
 	libapache2-mod-php7.4 \
@@ -112,5 +113,7 @@ ADD ./supervisor/ssh.conf /etc/supervisor/conf.d/ssh.conf
 RUN chown root:root /etc/supervisor/conf.d/* && chmod 644 /etc/supervisor/conf.d/*
 
 EXPOSE 80 22 8080 8000
+
+WORKDIR /home/serveruser/vhosts
 
 CMD ["/usr/bin/supervisord", "-n"]
